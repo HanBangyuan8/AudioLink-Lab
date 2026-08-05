@@ -18,20 +18,19 @@ Initial public release.
 - Added adaptive planning, spatial IR, distributed measurement, device benchmark, plugin, and signal-path foundations.
 - Added Python reference validation, blind cases, benchmarks, architecture checks, fault-injection notes, and privacy scanning.
 - Changed the repository license from MIT to Mozilla Public License 2.0.
+- Documented hardware, hostile-LAN, third-party Audio Unit, and validation limitations instead of presenting them as certified capabilities.
 
-Known limitations are documented in `KNOWN_LIMITATIONS.md` and the security
-review. Physical device soak testing, hostile-LAN protection, and third-party
-Audio Unit helper-process isolation are not implied by this release.
+## v0.9.0
 
-## v0.9.0 - release-audit baseline
+Release-audit baseline.
 
 - Centralized app, build, algorithm, protocol, report, bundle, automation, and database version metadata.
 - Added the independent DSP, architecture, privacy, concurrency, and security review documents.
 - Added generated validation corpora, blind fixtures, benchmark scripts, and release packaging support.
 - Added migration backups, bounded bundle validation, importer limits, cancellation cleanup, and realtime callback hardening.
 
-## v0.1.0 - development history
+## v0.1.0
 
-Initial development milestones for signal generation, WAV import, correlation,
-quality analysis, visualization, storage, realtime measurement, networking,
-mobile companion, calibration, drift, and reporting.
+Development release.
+
+- Added initial milestones for signal generation, WAV import, correlation, quality analysis, visualization, storage, realtime measurement, networking, mobile companion, calibration, drift, and reporting.

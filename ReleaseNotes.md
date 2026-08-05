@@ -1,56 +1,17 @@
-# AudioLink Lab v1.0.0
+Major release.
 
-AudioLink Lab v1.0.0 is the first public package of the native Apple-platform
-audio measurement toolkit.
-
-## Included
-
-- macOS SwiftUI file-analysis workflow for two WAV files
-- Deterministic test signals and Float32 PCM processing
-- Direct/FFT correlation with delay, peak, polarity, and quality diagnostics
-- Waveform/correlation visualization and PNG export
-- SQLite history, repeated measurements, calibration, and drift analysis
-- Same-Mac realtime loopback foundations and an iOS companion target
-- Versioned reports, anonymous bundles, CLI automation, and validation tools
-
-## Install
-
-Download the macOS archive from the GitHub Releases page and unzip it. The
-package is an ad-hoc/unsigned development distribution unless a developer has
-provided their own signing and notarization credentials.
-
-## Build from source
-
-```bash
-./Scripts/test-packages.sh
-./Scripts/build-all.sh
-AUDIO_LINK_VERSION=1.0.0 AUDIO_LINK_BUILD_VERSION=1 ./Scripts/package-app.sh release
-```
-
-## Privacy
-
-Results-only history and reports are the default. Raw audio, absolute paths,
-bookmarks, and detailed hardware identifiers require explicit user choice.
-Free-form notes should be reviewed before public sharing. See `PRIVACY.md` and
-`SECURITY.md`.
-
-## Important limitations
-
-- The LAN protocol is pairing-protected but not TLS-authenticated; use it only
-  on a trusted local network.
-- Third-party Audio Units are not yet isolated in a helper process. Do not load
-  untrusted plugins.
-- Physical Core Audio recovery, iOS interruption behavior, sleep/wake, disk-full
-  handling, and long hardware soak tests require manual validation.
-- Advanced device, DAW, plugin, spatial, and distributed modules are foundations
-  and diagnostics, not certification tools.
-
-## Reproducibility
-
-The result records app/build, algorithm, protocol, report, bundle, automation,
-and database versions independently. Python reference implementations and
-deterministic examples are in `Validation/` and `Examples/`.
-
-## License
-
-Mozilla Public License 2.0. See `LICENSE`.
+- Added a native macOS SwiftUI workflow for reference-versus-recording WAV latency analysis.
+- Added deterministic logarithmic and linear sweeps, chirps, MLS, impulse, silence, and seeded noise generation.
+- Added PCM 16/24/32-bit and IEEE Float32 WAV import with explicit preprocessing and safe decoded-size limits.
+- Added direct and Accelerate FFT cross-correlation with signed lag conventions, search windows, peak candidates, and fractional interpolation.
+- Added explainable quality levels, confidence diagnostics, clipping/noise/truncation checks, ambiguity detection, and structured warnings.
+- Added waveform, correlation, and peak-detail visualization models with bounded downsampling and PNG export.
+- Added privacy-first SQLite history, repeat-measurement statistics, calibration profiles, clock-drift estimation, and processing logs.
+- Added same-Mac real-time loopback orchestration, Core Audio capability models, bounded realtime capture storage, and a native iOS companion target.
+- Added Bonjour/LAN protocol foundations, explicit pairing, chunked transfer, clock observations, and uncertainty-aware distributed measurement foundations.
+- Added reporting in JSON, CSV, HTML, PDF, and PNG plus the checksummed `.audiolinkbundle` format.
+- Added the `audiolink` CLI, localhost-only automation API, batch plans, shell completions, and Python examples.
+- Added adaptive planning, spatial IR, device benchmark, plugin, and signal-path foundations.
+- Added Python reference validation, blind cases, benchmarks, architecture checks, fault-injection notes, and privacy scanning.
+- Switched the project license to Mozilla Public License 2.0.
+- Documented hardware, hostile-LAN, third-party Audio Unit, signing, notarization, and validation limitations.
