@@ -11,6 +11,13 @@ with NumPy/SciPy, checks integer lag/peak agreement, and expects invalid or
 ambiguous outcomes where appropriate. It writes `validation-summary.json` and
 `validation-summary.md` and exits non-zero for a mismatch.
 
+The truncation fixture deliberately requires an `ambiguous` diagnostic rather
+than an exact lag: a partial recording can contain a plausible but non-unique
+peak, so reporting the warning is the tested behavior. The stereo-mismatch
+fixture is a mono/stereo configuration error and must be rejected cleanly
+(exit code 2) until the caller explicitly downmixes or selects compatible
+channels.
+
 The Python environment is optional and never used by the app:
 
 ```bash

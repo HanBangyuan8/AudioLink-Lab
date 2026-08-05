@@ -1,6 +1,7 @@
 import AudioLinkCore
 import AudioLinkDSP
 import Foundation
+import Darwin
 
 private enum ToolError: Error, LocalizedError {
     case missingInputs
@@ -135,7 +136,21 @@ private struct CorrelationToolReport: Codable {
 
 @main
 private enum AudioLinkCorrelationTool {
-    static func main() async throws {
+    static func main() async {
+        do {
+            try await run()
+        } catch {
+            // Keep command-line failures actionable and non-crashing. A thrown
+            // error from an async @main entry point is rendered as a fatal
+            // runtime error by Swift, which is especially unhelpful for
+            // malformed or incompatible input files.
+            let message = error.localizedDescription
+            fputs("AudioLinkCorrelationTool: \(message)\n", stderr)
+            exit(2)
+        }
+    }
+
+    private static func run() async throws {
         guard let options = try Options.parse(Array(CommandLine.arguments.dropFirst())) else { return }
         let referenceURL = URL(fileURLWithPath: options.referencePath).standardizedFileURL
         let observedURL = URL(fileURLWithPath: options.observedPath).standardizedFileURL

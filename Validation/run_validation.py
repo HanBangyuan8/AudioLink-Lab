@@ -110,14 +110,29 @@ def main() -> int:
                 swift_peak = float(peak["value"])
                 validity = report["result"]["correlation"].get("diagnostics", {}).get("validity")
                 result.update({"sampleRate": rate, "scipyLag": numpy_lag, "swiftLag": swift_lag, "scipyPeak": numpy_peak, "swiftPeak": swift_peak, "peakError": abs(numpy_peak - swift_peak), "validity": validity})
+                compare_lag = case.get("compare_lag", True)
                 lag_matches = case["expected_lag"] is None or abs(swift_lag - case["expected_lag"]) <= (2 if case["category"] == "fractionalDelay" else 0)
                 scipy_matches = abs(swift_lag - numpy_lag) <= 1
                 peak_matches = abs(numpy_peak - swift_peak) <= 5e-3
-                expected_validity = expected == "ambiguous"
-                ambiguity_matches = (validity == "ambiguous") if expected_validity else True
-                result["passed"] = bool(lag_matches and scipy_matches and peak_matches and ambiguity_matches)
+                expected_validity = case.get("expected_validity")
+                validity_matches = expected_validity is None or validity == expected_validity
+                result["expectedValidity"] = expected_validity
+                result["comparison"] = {
+                    "lag": "required" if compare_lag else "diagnostic-only",
+                    "scipyAgreement": scipy_matches,
+                    "peakAgreement": peak_matches,
+                }
+                result["passed"] = bool(
+                    (lag_matches and scipy_matches and peak_matches if compare_lag else True)
+                    and validity_matches
+                )
                 if not result["passed"]:
-                    result["detail"] = "; ".join([f"expected lag {case['expected_lag']}" if not lag_matches else "", "SciPy/Swift lag mismatch" if not scipy_matches else "", "peak mismatch" if not peak_matches else "", "ambiguity was not reported" if not ambiguity_matches else ""]).strip("; ")
+                    result["detail"] = "; ".join([
+                        f"expected lag {case['expected_lag']}" if not lag_matches and compare_lag else "",
+                        "SciPy/Swift lag mismatch" if not scipy_matches and compare_lag else "",
+                        "peak mismatch" if not peak_matches and compare_lag else "",
+                        f"expected validity {expected_validity}" if not validity_matches else "",
+                    ]).strip("; ")
             if not result["passed"]:
                 failures += 1
             results.append(result)

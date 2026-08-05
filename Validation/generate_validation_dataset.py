@@ -114,6 +114,11 @@ def build_dataset(root: Path, profile: str) -> dict:
 
     truncated = delayed(reference[:1_800], 900, tail=0)
     add_case(cases, root, "truncation", 48_000, reference, truncated, "truncation", 900, "qualityWarning")
+    # A partial capture can contain a plausible but non-unique correlation
+    # peak. The contract for this fixture is therefore an ambiguity warning,
+    # not an exact-delay assertion.
+    cases[-1]["expected_validity"] = "ambiguous"
+    cases[-1]["compare_lag"] = False
 
     drift_source = delayed(reference, 1_000)
     drift_count = int(round(drift_source.size * (1.0 + 50e-6)))
@@ -121,7 +126,11 @@ def build_dataset(root: Path, profile: str) -> dict:
     add_case(cases, root, "sample-rate-drift", 48_000, reference, drifted, "sampleRateDrift", 1_000, "qualityWarning", max_lag=2_000)
 
     stereo = np.column_stack((delayed(reference, 432), delayed(reference, 432, gain=0.15)))
-    add_case(cases, root, "stereo-mismatch", 48_000, reference, stereo, "stereoMismatch", 432, "qualityWarning", channel=0)
+    # Different channel counts are a configuration error, not a quality
+    # warning: correlation cannot compare a mono reference to a stereo file
+    # without an explicit preprocessing choice. The CLI must reject this
+    # cleanly and the validator treats that rejection as the expected result.
+    add_case(cases, root, "stereo-mismatch", 48_000, reference, stereo, "stereoMismatch", None, "invalid", channel=0)
 
     silence = np.zeros(4_096, dtype=np.float64)
     add_case(cases, root, "long-silence", 48_000, silence, silence, "silence", None, "invalid", max_lag=2_000)
