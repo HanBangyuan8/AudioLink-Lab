@@ -19,3 +19,4 @@ __pycache__/
 Benchmarks/results/
 # Finder/File Provider conflict copies must never become Swift sources.
 * [0-9].swift
+Resources/AppIcon.iconset/
