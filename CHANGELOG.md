@@ -17,8 +17,7 @@ Initial public release.
 - Added the `audiolink` CLI, localhost-only automation API, batch plans, shell completions, and Python examples.
 - Added adaptive planning, spatial IR, distributed measurement, device benchmark, plugin, and signal-path foundations.
 - Added Python reference validation, blind cases, benchmarks, architecture checks, fault-injection notes, and privacy scanning.
-- Changed the repository license from MIT to Mozilla Public License 2.0.
-- Documented hardware, hostile-LAN, third-party Audio Unit, and validation limitations instead of presenting them as certified capabilities.
+- Licensed under the Mozilla Public License 2.0.
 
 ## v0.9.0
 

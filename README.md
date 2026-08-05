@@ -329,8 +329,8 @@ third-party plugin crash isolation, and hardware soak testing. See
 
 Download the v1.0.0 package from [GitHub Releases](https://github.com/HanBangyuan8/AudioLink-Lab/releases).
 
-Release notes are maintained in [CHANGELOG.md](CHANGELOG.md) and
-[ReleaseNotes.md](ReleaseNotes.md). The current source release metadata is
+Release notes and the version history are maintained in
+[CHANGELOG.md](CHANGELOG.md). The current source release metadata is
 centralized in `AudioLinkReleaseMetadata`; app, algorithm, protocol, report,
 bundle, automation, and database versions are independent.
 
