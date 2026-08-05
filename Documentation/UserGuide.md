@@ -19,7 +19,7 @@ team for device installation.
 ./Scripts/test-packages.sh
 ./Scripts/build-all.sh
 ./Scripts/package-app.sh development
-open "dist/AudioLink Lab.app"
+open "dist/AudioLink-Lab-v1.0.0-macOS-universal.app"
 ```
 
 The app bundle is ad-hoc/unsigned for local development. It is not notarized

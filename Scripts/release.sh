@@ -38,8 +38,7 @@ else
 fi
 
 echo "== Unsigned/ad-hoc macOS artifact =="
-"$ROOT_DIR/Scripts/package-app.sh" release
-ARTIFACT_DIR="$ROOT_DIR/dist/releases/$VERSION"
+ARTIFACT_DIR="$ROOT_DIR/dist"
 mkdir -p "$ARTIFACT_DIR"
 
 echo "== Universal macOS CLI =="
@@ -57,29 +56,23 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
         --triple arm64-apple-macosx13.0 --scratch-path "$CLI_ARM_SCRATCH" --show-bin-path)"
     CLI_X86_BIN_DIR="$(swift build --package-path "$CLI_PACKAGE_DIR" --product audiolink \
         --triple x86_64-apple-macosx13.0 --scratch-path "$CLI_X86_SCRATCH" --show-bin-path)"
-    CLI_ARTIFACT="$ARTIFACT_DIR/audiolink-macOS-universal"
+    CLI_ARTIFACT="$ARTIFACT_DIR/AudioLink-Lab-v${VERSION}-macOS-universal-cli"
     lipo -create "$CLI_ARM_BIN_DIR/audiolink" "$CLI_X86_BIN_DIR/audiolink" -output "$CLI_ARTIFACT"
 else
     CLI_BIN_DIR="$(swift build --package-path "$CLI_PACKAGE_DIR" --product audiolink --show-bin-path)"
-    CLI_ARTIFACT="$ARTIFACT_DIR/audiolink-macOS-$(uname -m)"
+    CLI_ARTIFACT="$ARTIFACT_DIR/AudioLink-Lab-v${VERSION}-macOS-$(uname -m)-cli"
     cp "$CLI_BIN_DIR/audiolink" "$CLI_ARTIFACT"
 fi
 chmod +x "$CLI_ARTIFACT"
 shasum -a 256 "$CLI_ARTIFACT" > "$CLI_ARTIFACT.sha256"
 
-ARCHIVE="$ARTIFACT_DIR/AudioLinkLab-macOS-$VERSION-build-$BUILD_VERSION.zip"
-rm -f "$ARCHIVE" "$ARCHIVE.sha256"
-ditto -c -k --sequesterRsrc --keepParent "$ROOT_DIR/dist/AudioLink Lab.app" "$ARCHIVE"
+echo "== macOS app archive and DMG (unsigned/ad-hoc app) =="
+APP_PATH="$("$ROOT_DIR/Scripts/package-app.sh" release | tail -n 1)"
+PACKAGE_OUTPUT="$(AUDIO_LINK_APP_PATH="$APP_PATH" AUDIO_LINK_VERSION="$VERSION" \
+    "$ROOT_DIR/Scripts/package-dmg.sh" release)"
+ARCHIVE="$(printf '%s\n' "$PACKAGE_OUTPUT" | sed -n '1p')"
+DMG="$(printf '%s\n' "$PACKAGE_OUTPUT" | sed -n '2p')"
 shasum -a 256 "$ARCHIVE" > "$ARCHIVE.sha256"
-
-echo "== macOS DMG (unsigned/ad-hoc app) =="
-DMG="$ARTIFACT_DIR/AudioLinkLab-macOS-$VERSION-build-$BUILD_VERSION.dmg"
-DMG_STAGE="$RELEASE_STAGE_DIR/dmg/AudioLink Lab"
-mkdir -p "$(dirname "$DMG_STAGE")"
-ditto --norsrc "$ROOT_DIR/dist/AudioLink Lab.app" "$DMG_STAGE.app"
-rm -f "$DMG" "$DMG.sha256"
-hdiutil create -volname "AudioLink Lab $VERSION" -srcfolder "$(dirname "$DMG_STAGE")" \
-    -ov -format UDZO "$DMG" >/dev/null
 shasum -a 256 "$DMG" > "$DMG.sha256"
 
 echo "== iOS companion simulator artifact (not an IPA) =="
@@ -99,7 +92,7 @@ if [[ "$(uname -s)" == "Darwin" ]] && command -v xcrun >/dev/null 2>&1; then
         --triple "arm64-apple-ios${IOS_VERSION}-simulator" --scratch-path "$IOS_ARM_SCRATCH" --show-bin-path)"
     IOS_X86_BIN_DIR="$(swift build --package-path "$ROOT_DIR/Apps/AudioLinkMobile" --sdk "$IOS_SDK" \
         --triple "x86_64-apple-ios${IOS_VERSION}-simulator" --scratch-path "$IOS_X86_SCRATCH" --show-bin-path)"
-    IOS_ROOT="$RELEASE_STAGE_DIR/AudioLinkLab-iOS-Companion-Simulator-universal-$VERSION"
+    IOS_ROOT="$RELEASE_STAGE_DIR/AudioLink-Lab-v${VERSION}-iOS-companion-simulator-universal"
     mkdir -p "$IOS_ROOT"
     lipo -create "$IOS_ARM_BIN_DIR/AudioLinkMobile" "$IOS_X86_BIN_DIR/AudioLinkMobile" \
         -output "$IOS_ROOT/AudioLinkMobile"
@@ -111,7 +104,7 @@ This is an unsigned universal (arm64 + x86_64) iOS Simulator executable.
 It is not an installable iPhone/iPad IPA and does not include distribution signing.
 Build the Apps/AudioLinkMobile package with Xcode for a device archive.
 EOF
-    IOS_ARTIFACT="$ARTIFACT_DIR/AudioLinkLab-iOS-Companion-Simulator-universal-$VERSION.zip"
+    IOS_ARTIFACT="$ARTIFACT_DIR/AudioLink-Lab-v${VERSION}-iOS-companion-simulator-universal.zip"
     rm -f "$IOS_ARTIFACT" "$IOS_ARTIFACT.sha256"
     ditto -c -k --sequesterRsrc --keepParent "$IOS_ROOT" "$IOS_ARTIFACT"
     shasum -a 256 "$IOS_ARTIFACT" > "$IOS_ARTIFACT.sha256"
@@ -120,34 +113,19 @@ else
 fi
 
 echo "== Source archive =="
-SOURCE_ARCHIVE="$ARTIFACT_DIR/AudioLinkLab-source-$VERSION.tar.gz"
+SOURCE_ARCHIVE="$ARTIFACT_DIR/AudioLink-Lab-v${VERSION}-source.zip"
 SOURCE_CHECKSUM="$SOURCE_ARCHIVE.sha256"
 rm -f "$SOURCE_ARCHIVE" "$SOURCE_CHECKSUM"
-tar -czf "$SOURCE_ARCHIVE" \
-    --exclude='AudioLink Lab/.git' \
-    --exclude='AudioLink Lab/.build' \
-    --exclude='AudioLink Lab/.swiftpm' \
-    --exclude='AudioLink Lab/.venv-validation' \
-    --exclude='AudioLink Lab/.venv-validation/*' \
-    --exclude='AudioLink Lab/dist' \
-    --exclude='*/.git' \
-    --exclude='*/.build' \
-    --exclude='*/.build/*' \
-    --exclude='*/.swiftpm' \
-    --exclude='*/.swiftpm/*' \
-    --exclude='*/.venv-validation' \
-    --exclude='*/.venv-validation/*' \
-    --exclude='*/dist' \
-    --exclude='*/dist/*' \
-    --exclude='AudioLink Lab/__pycache__' \
-    --exclude='AudioLink Lab/Validation/results' \
-    --exclude='AudioLink Lab/Validation/generated' \
-    --exclude='AudioLink Lab/Validation/generated/*' \
-    --exclude='AudioLink Lab/Validation/BlindCases/generated' \
-    --exclude='AudioLink Lab/Validation/fixtures/*.wav' \
-    --exclude='AudioLink Lab/Validation/fixtures/*.png' \
-    --exclude='AudioLink Lab/Benchmarks/results' \
-    -C "$(dirname "$ROOT_DIR")" "$(basename "$ROOT_DIR")"
+(
+    cd "$ROOT_DIR"
+    zip -q -r "$SOURCE_ARCHIVE" . \
+        -x '.git/*' '*/.git/*' '.build/*' '*/.build/*' \
+        -x '.swiftpm/*' '*/.swiftpm/*' '.venv-validation/*' '*/.venv-validation/*' \
+        -x 'dist/*' '*/dist/*' 'Validation/results/*' 'Validation/generated/*' \
+        -x 'Validation/BlindCases/generated/*' 'Validation/fixtures/*.wav' \
+        -x 'Validation/fixtures/*.png' 'Benchmarks/results/*' \
+        -x '.DS_Store' '*/.DS_Store'
+)
 shasum -a 256 "$SOURCE_ARCHIVE" > "$SOURCE_CHECKSUM"
 
 IOS_MANIFEST_VALUE="null"

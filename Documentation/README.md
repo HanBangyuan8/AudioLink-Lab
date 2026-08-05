@@ -16,7 +16,7 @@ file per feature:
   release, performance, and engineering references.
 
 Independent audit records remain in [Reviews](Reviews/), and screenshot
-placeholders remain in [Screenshots](Screenshots/).
+placeholders remain in [`assets/screenshots/`](../assets/screenshots/).
 
 The repository root keeps only the project-level entry points: `README.md`,
 `CHANGELOG.md`, `LICENSE`, and `CONTRIBUTING.md`.

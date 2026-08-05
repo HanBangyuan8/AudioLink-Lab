@@ -98,7 +98,7 @@ Create an ad-hoc macOS `.app` bundle:
 ```bash
 AUDIO_LINK_VERSION=1.0.0 AUDIO_LINK_BUILD_VERSION=1 \
   ./Scripts/package-app.sh release
-open "dist/AudioLink Lab.app"
+open "dist/AudioLink-Lab-v1.0.0-macOS-universal.app"
 ```
 
 Create the complete release artifact set:
@@ -108,10 +108,12 @@ AUDIO_LINK_VERSION=1.0.0 AUDIO_LINK_BUILD_VERSION=1 \
   ./Scripts/release.sh --skip-validation
 ```
 
-The release script produces an unsigned/ad-hoc app archive, CLI binary,
-SHA-256 files, and a release manifest. Developer ID signing, notarization, and
-App Store distribution require the developer's own credentials and are never
-represented as complete by this repository.
+The release script writes flat, versioned artifacts directly under `dist/`:
+the macOS universal `.app`, `.zip`, and `.dmg`, the universal CLI, optional iOS
+companion simulator archive, source archive, SHA-256 files, and a release
+manifest. Developer ID signing, notarization, and App Store distribution
+require the developer's own credentials and are never represented as complete
+by this repository.
 
 ## Architecture
 
@@ -135,6 +137,8 @@ Packages/AudioLinkSignalPath  DAW and virtual-route marker analysis
 Benchmarks/                   Performance harnesses and baselines
 Validation/                   Python reference and blind DSP validation
 Documentation/               Architecture, algorithms, security, and usage
+assets/screenshots/           Screenshot placeholders and UI captures
+dist/                         Ignored, flat local release artifacts
 ```
 
 All shared packages are independent Swift packages. SwiftUI does not contain
