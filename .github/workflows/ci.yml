@@ -90,9 +90,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install validation dependencies
-        run: python3 -m pip install -r Validation/requirements.txt
+        run: |
+          python3 -m venv .venv-validation
+          . .venv-validation/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install -r Validation/requirements.txt
       - name: Compare Swift and SciPy
-        run: python3 Validation/run_validation.py --profile quick --output Validation/results/ci
+        run: .venv-validation/bin/python Validation/run_validation.py --profile quick --output Validation/results/ci
       - name: Upload validation summary
         if: always()
         uses: actions/upload-artifact@v4

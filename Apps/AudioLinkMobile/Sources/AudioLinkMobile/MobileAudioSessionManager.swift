@@ -95,7 +95,12 @@ public final class MobileAudioSessionManager: NSObject, @unchecked Sendable {
         }
         var options: AVAudioSession.CategoryOptions = []
         if role != .recorder { options.insert(.defaultToSpeaker) }
-        options.insert(.allowBluetoothHFP)
+        // Bluetooth HFP uses the stable category-option bit 0x4.  The Swift
+        // spelling changed from `allowBluetooth` to `allowBluetoothHFP` across
+        // SDK generations (and the former is deprecated in newer SDKs), so
+        // construct the option by its documented raw value to keep this
+        // companion buildable with both the CI and current iOS SDKs.
+        options.insert(AVAudioSession.CategoryOptions(rawValue: 0x4))
         if role != .recorder { options.insert(.allowBluetoothA2DP) }
         do {
             try audioSession.setCategory(category, mode: .measurement, options: options)

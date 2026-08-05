@@ -35,20 +35,31 @@ clean_bundle_metadata() {
     fi
 }
 
-ARCH_FLAGS=()
 if [[ "$(uname -s)" == "Darwin" ]]; then
-    ARCH_FLAGS=(--arch arm64 --arch x86_64)
-fi
-
-if ! swift build --package-path "$PACKAGE_DIR" -c "$CONFIGURATION" "${ARCH_FLAGS[@]}"; then
-    echo "Universal build unavailable; building for the host architecture." >&2
-    ARCH_FLAGS=()
+    # SwiftPM does not expose a portable multi-architecture output switch.
+    # Build each supported macOS architecture in an isolated scratch tree and
+    # combine the executables explicitly so the delivered app is genuinely
+    # universal (rather than a host-only binary with a universal filename).
+    ARM_SCRATCH="$STAGE_DIR/build-arm64"
+    X86_SCRATCH="$STAGE_DIR/build-x86_64"
+    swift build --package-path "$PACKAGE_DIR" -c "$CONFIGURATION" \
+        --triple arm64-apple-macosx13.0 --scratch-path "$ARM_SCRATCH"
+    swift build --package-path "$PACKAGE_DIR" -c "$CONFIGURATION" \
+        --triple x86_64-apple-macosx13.0 --scratch-path "$X86_SCRATCH"
+    ARM_BIN_DIR="$(swift build --package-path "$PACKAGE_DIR" -c "$CONFIGURATION" \
+        --triple arm64-apple-macosx13.0 --scratch-path "$ARM_SCRATCH" --show-bin-path)"
+    X86_BIN_DIR="$(swift build --package-path "$PACKAGE_DIR" -c "$CONFIGURATION" \
+        --triple x86_64-apple-macosx13.0 --scratch-path "$X86_SCRATCH" --show-bin-path)"
+    lipo -create "$ARM_BIN_DIR/$EXECUTABLE_NAME" "$X86_BIN_DIR/$EXECUTABLE_NAME" \
+        -output "$STAGE_DIR/$EXECUTABLE_NAME"
+    BIN_PATH="$STAGE_DIR/$EXECUTABLE_NAME"
+else
     swift build --package-path "$PACKAGE_DIR" -c "$CONFIGURATION"
+    BIN_DIR="$(swift build --package-path "$PACKAGE_DIR" -c "$CONFIGURATION" --show-bin-path)"
+    BIN_PATH="$BIN_DIR/$EXECUTABLE_NAME"
 fi
-
-BIN_DIR="$(swift build --package-path "$PACKAGE_DIR" -c "$CONFIGURATION" "${ARCH_FLAGS[@]}" --show-bin-path)"
 mkdir -p "$MACOS_DIR"
-cp "$BIN_DIR/$EXECUTABLE_NAME" "$MACOS_DIR/$EXECUTABLE_NAME"
+cp "$BIN_PATH" "$MACOS_DIR/$EXECUTABLE_NAME"
 chmod +x "$MACOS_DIR/$EXECUTABLE_NAME"
 
 plutil -create xml1 "$CONTENTS_DIR/Info.plist"

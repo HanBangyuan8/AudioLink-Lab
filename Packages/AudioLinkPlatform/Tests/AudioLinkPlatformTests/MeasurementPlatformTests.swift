@@ -17,9 +17,8 @@ final class MeasurementPlatformTests: XCTestCase {
         }
         let first = await queue.submit(module: module, configuration: .object([:]), resourceKeys: ["device:one"])
         let second = await queue.submit(module: module, configuration: .object([:]), resourceKeys: ["device:one"])
-        try await Task.sleep(for: .milliseconds(80))
-        let firstState = await queue.job(first)?.state
-        let secondState = await queue.job(second)?.state
+        let firstState = try await waitForTerminalState(of: first, in: queue)
+        let secondState = try await waitForTerminalState(of: second, in: queue)
         XCTAssertEqual(firstState, .completed)
         XCTAssertEqual(secondState, .completed)
     }
@@ -32,10 +31,39 @@ final class MeasurementPlatformTests: XCTestCase {
             return MeasurementResultEnvelope(jobID: context.jobID, provenance: MeasurementProvenance(moduleIdentifier: "slow", moduleVersion: "1", algorithmVersion: "test", appVersion: "test"), configuration: .object([:]), payload: .null)
         }
         let id = await queue.submit(module: module, configuration: .object([:]), resourceKeys: [])
-        try await Task.sleep(for: .milliseconds(20))
+        _ = try await waitForState(of: id, expected: .running, in: queue)
         try await queue.cancel(id)
-        try await Task.sleep(for: .milliseconds(20))
-        let state = await queue.job(id)?.state
+        let state = try await waitForTerminalState(of: id, in: queue)
         XCTAssertEqual(state, .cancelled)
+    }
+
+    private func waitForState(
+        of id: UUID,
+        expected: MeasurementJobState,
+        in queue: MeasurementJobQueue,
+        timeout: Duration = .seconds(2)
+    ) async throws -> MeasurementJobState {
+        let deadline = ContinuousClock.now + timeout
+        while ContinuousClock.now < deadline {
+            if let state = await queue.job(id)?.state, state == expected { return state }
+            try await Task.sleep(for: .milliseconds(5))
+        }
+        let state = await queue.job(id)?.state
+        return try XCTUnwrap(state, "Timed out waiting for \(expected.rawValue)")
+    }
+
+    private func waitForTerminalState(
+        of id: UUID,
+        in queue: MeasurementJobQueue,
+        timeout: Duration = .seconds(2)
+    ) async throws -> MeasurementJobState {
+        let deadline = ContinuousClock.now + timeout
+        while ContinuousClock.now < deadline {
+            if let state = await queue.job(id)?.state,
+               [.completed, .failed, .cancelled].contains(state) { return state }
+            try await Task.sleep(for: .milliseconds(5))
+        }
+        let state = await queue.job(id)?.state
+        return try XCTUnwrap(state, "Timed out waiting for terminal state")
     }
 }
