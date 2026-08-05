@@ -14,6 +14,10 @@ It combines a macOS SwiftUI application, an iOS companion, independently
 buildable Swift packages, deterministic DSP, local history, CLI automation, and
 privacy-aware reports.
 
+<p align="center">
+  <img src="Resources/AppIcon.png" alt="AudioLink Lab app icon" width="160">
+</p>
+
 ## Features
 
 - Import and compare reference/recording WAV files with typed sample units
