@@ -122,6 +122,7 @@ rm -f "$SOURCE_ARCHIVE" "$SOURCE_CHECKSUM"
         -x '.git/*' '*/.git/*' '.build/*' '*/.build/*' \
         -x '.swiftpm/*' '*/.swiftpm/*' '.venv-validation/*' '*/.venv-validation/*' \
         -x 'dist/*' '*/dist/*' 'Validation/results/*' 'Validation/generated/*' \
+        -x 'Resources/AppIcon.iconset/*' 'Resources/AppIcon.iconset' \
         -x 'Validation/BlindCases/generated/*' 'Validation/fixtures/*.wav' \
         -x 'Validation/fixtures/*.png' 'Benchmarks/results/*' \
         -x '.DS_Store' '*/.DS_Store'
