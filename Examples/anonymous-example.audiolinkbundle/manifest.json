@@ -1,0 +1,24 @@
+{
+  "algorithmVersion": "correlation-v2-dsp-audit",
+  "anonymizationLevel": "strict",
+  "bundleID": "11111111-2222-3333-4444-555555555555",
+  "content": [
+    {
+      "byteCount": 135,
+      "contentType": "application/json",
+      "isOptional": false,
+      "relativePath": "results/result.json",
+      "sha256": "52c76fe2b311035877be08a29ee0423ab6d15c8c69ed21b04957e77aff93445b"
+    }
+  ],
+  "createdAt": "2026-01-01T00:00:00Z",
+  "creatorAppVersion": "example",
+  "measurementType": "file-delay",
+  "notes": "Synthetic anonymous example; no source audio is included.",
+  "privacyLevel": "strict",
+  "protocolVersion": "1.0",
+  "requiredCapabilities": [],
+  "schemaVersion": "1.0",
+  "signaturePlaceholder": null,
+  "validationStatus": "notValidated"
+}

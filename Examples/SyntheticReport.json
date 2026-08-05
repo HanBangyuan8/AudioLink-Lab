@@ -1,0 +1,123 @@
+{
+  "schema_version": "1.0",
+  "report_id": "00000000-0000-4000-8000-000000000001",
+  "title": "Synthetic AudioLink Lab Example",
+  "generated_at": "2026-01-01T00:00:00.000Z",
+  "session_id": "00000000-0000-4000-8000-000000000002",
+  "measurement_type": "offlineFile",
+  "executive_summary": "Synthetic 48 kHz loopback example; no personal or device identifiers.",
+  "measurement_setup": {
+    "signal": "logarithmic_sine_sweep",
+    "sample_rate_hertz": "48000",
+    "duration_seconds": "2.0",
+    "seed": "42"
+  },
+  "devices": [
+    {
+      "role": "input",
+      "name": "Synthetic Input",
+      "manufacturer": "AudioLink Lab",
+      "transport": "virtual",
+      "supports_input": true,
+      "supports_output": false
+    },
+    {
+      "role": "output",
+      "name": "Synthetic Output",
+      "manufacturer": "AudioLink Lab",
+      "transport": "virtual",
+      "supports_input": false,
+      "supports_output": true
+    }
+  ],
+  "signal_configuration": {
+    "start_frequency_hertz": "20",
+    "end_frequency_hertz": "20000",
+    "amplitude": "0.18"
+  },
+  "audio_format": {
+    "sample_rate_hertz": "48000",
+    "reference_channels": "1",
+    "recording_channels": "1"
+  },
+  "runs": [
+    {
+      "id": "00000000-0000-4000-8000-000000000003",
+      "session_id": "00000000-0000-4000-8000-000000000002",
+      "created_at": "2026-01-01T00:00:01.000Z",
+      "completed_at": "2026-01-01T00:00:03.000Z",
+      "reference": {
+        "role": "reference",
+        "file_name": "synthetic-reference.wav",
+        "container": "wav",
+        "encoding": "pcm16",
+        "sample_rate_hertz": 48000,
+        "channel_count": 1,
+        "bit_depth": 32,
+        "interleaved": false,
+        "frame_count": 96000,
+        "duration_seconds": 2,
+        "peak": 0.18,
+        "rms": 0.08,
+        "clipping_sample_count": 0,
+        "dc_offset": 0
+      },
+      "recording": {
+        "role": "recording",
+        "file_name": "synthetic-recording.wav",
+        "container": "wav",
+        "encoding": "pcm16",
+        "sample_rate_hertz": 48000,
+        "channel_count": 1,
+        "bit_depth": 32,
+        "interleaved": false,
+        "frame_count": 96240,
+        "duration_seconds": 2.005,
+        "peak": 0.17,
+        "rms": 0.075,
+        "clipping_sample_count": 0,
+        "dc_offset": 0.0001
+      },
+      "delay": {
+        "integer_samples": 240,
+        "fractional_samples": 240.12,
+        "milliseconds": 5.0025,
+        "sample_rate_hertz": 48000,
+        "peak_correlation": 0.94,
+        "peak_to_sidelobe_ratio": 5.8,
+        "confidence": 0.92,
+        "polarity": "normal"
+      },
+      "quality": {
+        "level": "good",
+        "confidence": 0.92,
+        "summary": "A clear synthetic correlation peak.",
+        "metrics": {"primaryCorrelation": 0.94, "clippingRatio": 0},
+        "issues": [],
+        "candidate_peak_samples": [240],
+        "should_remeasure": false
+      },
+      "warnings": [],
+      "processing_log": [],
+      "chart_cache": {"correlation_sequence_available": "true", "waveform_available": "false"},
+      "notes": "Synthetic fixture only."
+    }
+  ],
+  "quality": {
+    "level": "good",
+    "confidence": 0.92,
+    "summary": "A clear synthetic correlation peak.",
+    "metrics": {"primaryCorrelation": 0.94},
+    "issues": [],
+    "candidate_peak_samples": [240],
+    "should_remeasure": false
+  },
+  "warnings": [],
+  "charts": [],
+  "processing_log": [],
+  "app_version": "example",
+  "algorithm_version": "correlation-v2-dsp-audit",
+  "reproducibility": {"seed": "42"},
+  "notes": "Generated synthetic example; contains no real user data.",
+  "privacy": {"include_detailed_diagnostic_identifiers": false}
+}

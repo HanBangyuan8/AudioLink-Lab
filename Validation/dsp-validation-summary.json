@@ -1,0 +1,66 @@
+{
+  "formatVersion": 1,
+  "review": "prompt-27-dsp-independent-review",
+  "generatedAt": "2026-08-04T21:15:19Z",
+  "algorithmVersion": "correlation-v2-dsp-audit",
+  "spatialAlgorithmVersion": "spatial-ir-schroeder-v2",
+  "pythonReference": {
+    "path": "Validation/Reference/reference_algorithms.py",
+    "numpy": "unverified: module not installed on audit host",
+    "scipy": "unverified: module not installed on audit host",
+    "status": "unverified"
+  },
+  "blindCases": {
+    "generator": "Validation/BlindCases/generate_blind_cases.py",
+    "caseCount": 100,
+    "sampleRatesHertz": [44100, 48000, 96000, 192000],
+    "tolerances": {"integerSamples": 1, "fractionalSamples": 0.25},
+    "status": "unverified: NumPy/SciPy unavailable",
+    "lastAttempt": "python3 Validation/BlindCases/run_blind_validation.py (dependency import failed)"
+  },
+  "legacyValidation": {
+    "command": "python3 Validation/run_validation.py --profile quick",
+    "status": "unverified: NumPy/SciPy unavailable"
+  },
+  "swiftRegression": {
+    "spatialPackageFocused": "passed",
+    "pluginPackageFocused": "passed",
+    "fullPackageMatrix": "passed: 223 tests",
+    "cleanMacOSBuild": "passed",
+    "cleanMobileHostBuild": "passed",
+    "cliBuild": "passed",
+    "macOSPackageTests": "passed: 22 tests",
+    "mobilePackageTests": "passed: 6 tests",
+    "architectureBoundaryChecks": "passed"
+  },
+  "fixedIssues": [
+    "spatial RT metrics now use reverse cumulative energy",
+    "spatial RT metrics reject excessive supplied noise floors and insufficient dynamic range",
+    "C50/C80/D50/center time exclude pre-direct energy",
+    "acoustic coverage uses primary overlap",
+    "plugin group delay unwraps response phase",
+    "fractional delay UI precision reduced and labeled estimate"
+  ],
+  "prePostEvidence": {
+    "pluginGroupDelayBranchWrap": {
+      "beforeObservedMaxAbsoluteErrorSeconds": 0.0004081632653,
+      "afterDenseGridRegressionMaxAbsoluteErrorSeconds": "<1e-8",
+      "note": "The before value is from the old sparse wrapped-phase fixture; the after value is from the fixed-delay dense-frequency regression. Sparse frequency grids remain intrinsically ambiguous."
+    },
+    "spatialDecayMetrics": {
+      "before": "sample-amplitude fit and no fit-quality gate",
+      "after": "reverse cumulative energy with sample-count, dynamic-range and R-squared gates",
+      "independentNumericComparison": "unverified: NumPy/SciPy unavailable"
+    },
+    "correlationIntegerLag": {
+      "before": "existing direct/FFT Swift tests passed",
+      "after": "same documented lag convention; independent Python comparison unverified"
+    }
+  },
+  "claims": {
+    "integerLag": "trustworthy under documented finite/same-rate/overlap assumptions",
+    "fractionalLag": "estimate; no universal accuracy claim",
+    "qualityScore": "deterministic heuristic, not probability",
+    "spatialRT": "valid only when energy fit passes checks; not standards certification"
+  }
+}

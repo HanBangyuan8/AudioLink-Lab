@@ -1,0 +1,7 @@
+{
+  "delayMilliseconds": 2.5,
+  "integerSampleDelay": 120,
+  "quality": "good",
+  "sampleRateHertz": 48000,
+  "schemaVersion": "1.0"
+}

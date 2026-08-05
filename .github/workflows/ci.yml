@@ -1,0 +1,109 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  architecture-boundaries:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check package dependency boundaries
+        run: bash Scripts/check-architecture.sh
+
+  package-tests:
+    name: Swift package tests
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - AudioLinkCore
+          - AudioLinkDSP
+          - AudioLinkRealtime
+          - AudioLinkStorage
+          - AudioLinkNetworking
+          - AudioLinkReporting
+          - AudioLinkPlugin
+          - AudioLinkSignalPath
+          - AudioLinkAdaptive
+          - AudioLinkSpatial
+          - AudioLinkDistributed
+          - AudioLinkBundle
+          - AudioLinkPlatform
+          - AudioLinkAutomation
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test ${{ matrix.package }}
+        run: swift test --package-path "Packages/${{ matrix.package }}" -Xswiftc -warnings-as-errors
+
+  cli-smoke:
+    name: CLI smoke build
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build audiolink
+        run: swift build --package-path Packages/AudioLinkAutomation --product audiolink -Xswiftc -warnings-as-errors
+      - name: Check help output
+        run: swift run --package-path Packages/AudioLinkAutomation audiolink --help
+
+  macos-app-build:
+    name: macOS app build
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build AudioLinkMac
+        run: swift build --package-path Apps/AudioLinkMac -Xswiftc -warnings-as-errors
+      - name: Test AudioLinkMac projections
+        run: swift test --package-path Apps/AudioLinkMac -Xswiftc -warnings-as-errors
+
+  mobile-companion-host-tests:
+    name: iOS companion host tests
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test AudioLinkMobile shared logic on macOS
+        run: swift test --package-path Apps/AudioLinkMobile -Xswiftc -warnings-as-errors
+
+  mobile-companion-ios-build:
+    name: iOS companion SDK build
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build AudioLinkMobile for iOS Simulator
+        shell: bash
+        run: |
+          IOS_SDK="$(xcrun --sdk iphonesimulator --show-sdk-path)"
+          IOS_VERSION="$(xcrun --sdk iphonesimulator --show-sdk-platform-version)"
+          swift build --package-path Apps/AudioLinkMobile \
+            --sdk "$IOS_SDK" \
+            --triple "arm64-apple-ios${IOS_VERSION}-simulator" \
+            -Xswiftc -warnings-as-errors
+
+  dsp-validation:
+    name: DSP validation corpus
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install validation dependencies
+        run: python3 -m pip install -r Validation/requirements.txt
+      - name: Compare Swift and SciPy
+        run: python3 Validation/run_validation.py --profile quick --output Validation/results/ci
+      - name: Upload validation summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: audiolink-validation-summary
+          path: Validation/results/ci
+
+  benchmark-smoke:
+    name: Benchmark smoke build
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build benchmark executable
+        run: swift build --package-path Benchmarks/AudioLinkBenchmarks -Xswiftc -warnings-as-errors
