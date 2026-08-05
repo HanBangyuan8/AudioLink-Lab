@@ -270,7 +270,8 @@ status until the required adapter is available.
 The optional local automation service is disabled by default, binds only to
 loopback, requires a random token, limits request size and concurrency, and
 accepts files only from explicitly allowed directories. See
-`CLI_REFERENCE.md` and `AUTOMATION_SECURITY.md`.
+[`Documentation/DeveloperAndValidation.md`](Documentation/DeveloperAndValidation.md)
+and [`Documentation/SecurityAndData.md`](Documentation/SecurityAndData.md).
 
 ## Validation and development references
 
@@ -279,20 +280,19 @@ reference implementation. The validation corpus covers integer/fractional
 delay, gain, polarity, white/pink noise, clipping, echoes, truncation, drift,
 periodic ambiguity, stereo mismatch, long silence, and high sample rates.
 
-Relevant documents include:
+Relevant documents are grouped into a small set of maintained references:
 
-- `ALGORITHM.md` and `Documentation/CorrelationAnalysis.md` for lag convention,
-  FFT padding, normalization, complexity, and fractional delay limits
-- `Documentation/TestSignals.md` and `Documentation/AudioFileImport.md` for
-  generation, formats, preprocessing, and resampling
-- `Documentation/MeasurementQuality.md`, `Documentation/RepeatedMeasurements.md`,
-  and `Documentation/CalibrationAndStability.md` for quality/statistics
-- `Documentation/DeviceProfiler.md`, `Documentation/InterfaceBenchmark.md`,
-  and `Documentation/AudioUnitProfiler.md` for advanced labs
-- `Documentation/Networking.md`, `Documentation/MobileCompanion.md`, and
-  `PROTOCOL.md` for LAN and iOS behavior
-- `Documentation/Reporting.md`, `BUNDLE_FORMAT.md`, and `PRIVACY.md` for export
-  and privacy policy
+- [`Documentation/UserGuide.md`](Documentation/UserGuide.md) for installation,
+  first use, workflows, history, reports, troubleshooting, and limitations
+- [`Documentation/MeasurementReference.md`](Documentation/MeasurementReference.md)
+  for signals, import, correlation, quality, calibration, visualization, and
+  spatial/adaptive measurement
+- [`Documentation/PlatformAndLabs.md`](Documentation/PlatformAndLabs.md) for
+  realtime audio, Core Audio, devices, plugins, networking, and advanced labs
+- [`Documentation/SecurityAndData.md`](Documentation/SecurityAndData.md) for
+  privacy, protocol, bundles, automation, and security boundaries
+- [`Documentation/DeveloperAndValidation.md`](Documentation/DeveloperAndValidation.md)
+  for CLI, validation, release, and engineering references
 - `Documentation/Reviews/ARCHITECTURE_REVIEW.md`,
   `Documentation/Reviews/DSP_VALIDATION_REVIEW.md`, and
   `Documentation/Reviews/RELIABILITY_SECURITY_REVIEW.md` for audit evidence
@@ -322,7 +322,8 @@ python3 Validation/run_validation.py --workspace . --profile quick
 Current release limitations include unverified physical Core Audio route
 recovery, real iOS interruption/background behavior, hostile-LAN resistance,
 third-party plugin crash isolation, and hardware soak testing. See
-`KNOWN_LIMITATIONS.md`, `SECURITY.md`, and
+[`Documentation/UserGuide.md`](Documentation/UserGuide.md),
+[`Documentation/SecurityAndData.md`](Documentation/SecurityAndData.md), and
 `Documentation/Reviews/RELIABILITY_SECURITY_REVIEW.md` before distribution.
 
 ## Release

@@ -26,4 +26,5 @@ release may add a machine-specific baseline after collecting several runs.
 The transfer row measures the actor-isolated in-memory transport used by tests;
 it does not claim to represent Wi-Fi throughput. Hardware audio, Core Audio
 route changes, iOS interruption behavior, signing, and notarization require the
-manual checklist in `Documentation/ReleaseAudit.md`.
+manual checklist in the release section of
+[`Documentation/DeveloperAndValidation.md`](../Documentation/DeveloperAndValidation.md).

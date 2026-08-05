@@ -1,7 +1,8 @@
 # Python signal validation
 
 The formal generated corpus is driven by `generate_validation_dataset.py` and
-`run_validation.py`; see the repository-level [VALIDATION.md](../VALIDATION.md)
+`run_validation.py`; see the validation section of
+[`Documentation/DeveloperAndValidation.md`](../Documentation/DeveloperAndValidation.md)
 for the case matrix and tolerances.
 
 ```bash
